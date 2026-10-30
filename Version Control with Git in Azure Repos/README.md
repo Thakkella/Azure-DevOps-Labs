@@ -26,7 +26,7 @@ Run these commands to set your Git identity (replace placeholders with your deta
     git config --global user.name *<John Doe>*
     git config --global user.email <[johndoe@example.com](mailto:johndoe@example.com)>
 
-    ![alt text](<Screenshot 2026-10-30 123641.png>)
+![alt text](<Screenshot 2026-10-30 123641.png>)
 
 ## Exercise 0 – Task 2: Import the eShopOnWeb Repository In this task, you will import the eShopOnWeb repository from GitHub into the repository that already exists in your pre-provisioned project, and then set main as the default branch.
 
