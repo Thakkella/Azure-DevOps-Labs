@@ -81,7 +81,7 @@ Note: Use File > Save and the on-screen **SOURCE** **CONTROL** buttons because b
 
 ### Review Commits
 
-Switch to the Azure DevOps portal in your browser. In the Repos section, select *Commits*. Verify your *My commit from VS Code* appears at the top of the list. ### Stage Changes Switch back to Visual Studio Code. Open /kk-devops-dev-***/src/Web/Program.cs and change the first comment to: //My second change
+Switch to the Azure DevOps portal in your browser. In the Repos section, select *Commits*. Verify your *My commit from VS Code* appears at the top of the list. Stage Changes. Switch back to Visual Studio Code. Open /kk-devops-dev-***/src/Web/Program.cs and change the first comment to: //My second change
 
 Save the file (File > Save).
 
