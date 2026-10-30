@@ -176,13 +176,14 @@ In the **YAML** editor, find the commented-out trigger lines:
     # - main
 
 Replace them with the following trigger configuration:
-trigger:
-    branches:
-    include:
-    - main
-    paths:
-    include:
-    - src/*
+
+    # trigger:
+    #   branches:
+    #     include:
+    #     - main
+    #   paths:
+    #     include:
+    #     - src/*
 
 This configuration means the pipeline will automatically run whenever:
 
