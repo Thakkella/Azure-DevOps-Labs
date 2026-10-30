@@ -20,9 +20,12 @@ Open the Azure DevOps project **URL** provided in the lab and keep it open for t
 
 ## Exercise 0 – Task 1: Configure Git and Visual Studio Code In this task, you will configure Git with your identity and set up the credential helper in Visual Studio Code.
 
-Open Visual Studio Code on the lab computer. In the terminal, run the following command to configure the credential helper: git config --global credential.helper store
+Open Visual Studio Code on the lab computer. In the terminal, run the following command to configure the credential helper: 
+
+    git config --global credential.helper store
 
 Run these commands to set your Git identity (replace placeholders with your details, without < > symbols):
+
     git config --global user.name *<John Doe>*
     git config --global user.email <[johndoe@example.com](mailto:johndoe@example.com)>
 
@@ -42,9 +45,13 @@ Click *Import*. The import runs in the background and can take up to a minute. W
 
 Before cloning, set up your **SSH** key:
 
-Open a terminal and generate an **SSH** key pair with: ssh-keygen -t rsa -b **4096** -C *ci-agent* -N "" -f ~/.ssh/id_rsa
+Open a terminal and generate an **SSH** key pair with: 
 
-Copy the public key output from: cat ~/.ssh/id_rsa.pub
+    ssh-keygen -t rsa -b **4096** -C *ci-agent* -N "" -f ~/.ssh/id_rsa
+
+Copy the public key output from: 
+
+    cat ~/.ssh/id_rsa.pub
 
 In Azure DevOps, go to User Settings located on the top right, beside your profile logo → **SSH** Public Keys (under Security) → Add your public key. Clone the repository:
 
