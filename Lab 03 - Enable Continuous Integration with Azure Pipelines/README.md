@@ -108,7 +108,7 @@ Click the *Edit* button (top-right)
 
 Add the following comment on the first line:
 
-   # Testing my PR
+   ### Testing my PR
 
 Click *Commit > Commit* (accept the default commit message) Create and Complete the Pull Request: When prompted, click *Create a Pull Request*
 
