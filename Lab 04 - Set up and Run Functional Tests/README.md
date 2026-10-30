@@ -46,10 +46,11 @@ Now, edit the pipeline **YAML** to add the functional tests. These use Flask's t
 
 Open python-functional-tests and click *Edit*.
 Insert the following step immediately after the *Run unit tests* step (and before the PublishTestResults@2 task):
-- script: |
-    source venv/bin/activate
-    pytest functional-tests/test_functional.py --junitxml=functional-results.xml
-    displayName: Run functional tests
+
+    - script: |
+        source venv/bin/activate
+        pytest functional-tests/test_functional.py --junitxml=functional-results.xml
+        displayName: Run functional tests
 
 Watch the indentation. In this pipeline, the steps are not indented under steps:; each - script: / - task: starts at the left margin. After pasting, check that the new - script: lines up with the - script: above it and that the editor did not add extra leading spaces. Use the editor's Validate to confirm before saving.
 
