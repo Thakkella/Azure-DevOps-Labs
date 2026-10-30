@@ -76,6 +76,12 @@ Click "Save"
 
 Important: When you create the pipeline, Azure DevOps auto-names it after the repository (python-calculator-webapp), not after the YAML file. You must rename it to python-calc-ci-pr (steps 11–13) or the validation check will not pass.
 
+![alt text](<Screenshot 2026-10-30 171821.png>)
+
+![alt text](<Screenshot 2026-10-30 171846.png>)
+
+![alt text](<Screenshot 2026-10-30 171908.png>)
+
 ## Exercise 1: Include Build Validation as Part of a Pull Request - Task 2: Configure Branch Policies In this task, you will add branch policies to the main branch. These policies will:
 
 Require at least one reviewer for every Pull Request Require the python-calc-ci-pr pipeline to pass as build validation before merging Steps: Navigate to Repos > Branches
@@ -89,6 +95,8 @@ Under *Require minimum number of reviewers*:
 Toggle it On Set the minimum number of reviewers to 1 Check *Allow requestors to approve their own changes* (this lets you approve your own PR in the lab) Under *Build Validation* section:
 
 Click the *+* button to add a build policy In the Build pipeline dropdown, select python-calc-ci-pr Leave other settings at defaults Click *Save* Note: In a real-world project, you would typically not allow requestors to approve their own changes. We enable this here so you can complete the lab without a second user account.
+
+![alt text](<Screenshot 2026-10-30 172512.png>)
 
 ## Exercise 1: Include Build Validation as Part of a Pull Request - Task 3: Test the PR Validation Workflow In this task, you will test the Pull Request validation by creating a feature branch, making a code change, and submitting a Pull Request that triggers the build validation pipeline.
 
@@ -123,6 +131,8 @@ Click *Approve* (top-right) to satisfy the reviewer requirement
 From the *Set auto-complete* dropdown, click *Complete*
 
 On the Complete Pull Request tab, click *Complete Merge*
+
+![alt text](<Screenshot 2026-10-30 173024.png>)
 
 ## Exercise 2: Configure CI Pipeline as Code with **YAML** - Task 1: Import the CI **YAML** Pipeline In this task, you will import the full CI pipeline **YAML** definition. This pipeline performs additional steps compared to the PR validation pipeline, including archiving and publishing build artifacts.
 
@@ -223,6 +233,10 @@ Wait for the run to complete successfully
 Click *Related* > *Published* to view the published artifacts:
 
 Bicep – The infrastructure-as-code artifact Website – The application artifact
+
+![alt text](<Screenshot 2026-10-30 173529.png>)
+
+![alt text](<Screenshot 2026-10-30 174007.png>)
 
 ## Review - Congratulations! You have successfully completed the Enable Continuous Integration with Azure Pipelines lab.
 
