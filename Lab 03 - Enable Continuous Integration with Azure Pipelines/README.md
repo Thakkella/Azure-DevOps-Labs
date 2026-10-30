@@ -1,4 +1,4 @@
-# Lab: Enable Continuous Integration with Azure Pipelines In this lab, you will learn how to define build pipelines in Azure DevOps using **YAML**. The pipelines will be used in two scenarios:
+# Lab: Enable Continuous Integration with Azure Pipelines - In this lab, you will learn how to define build pipelines in Azure DevOps using **YAML**. The pipelines will be used in two scenarios:
 
 As part of a Pull Request validation workflow (build validation policy) As a Continuous Integration (CI) pipeline that triggers automatically on code changes You will work with a Python Calculator application hosted in Azure Repos.
 
