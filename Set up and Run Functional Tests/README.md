@@ -16,17 +16,29 @@ In the Import a Git repository dialog, paste this into Clone **URL**: [https://g
 
 In the Name field, make sure the repository is named exactly python-calculator-webapp. Azure DevOps auto-fills this from the clone **URL** and appends .git by default; delete the trailing .git so the name matches exactly. Then click *Import*. Make sure that main is set as the default branch (Repos > Branches). Already imported into the default repository? You do not need to redo the import; rename it instead: go to Project Settings > Repositories, select the repository, open the ⋮ (More options) menu, choose Rename, and enter python-calculator-webapp.
 
+![alt text](<Screenshot 2026-10-30 153834.png>)
+
 ## Exercise 0 – Task 2: Verify the Self-Hosted Agent In this task, you will confirm the lab's self-hosted agent is online before you create the pipeline that runs the tests on it.
 
 The lab provisions a self-hosted Linux agent kk-devops-agent in the kk-devops-agent-pool-xxxxx pool. The pipeline runs the tests on this agent.
 
 Project Settings > Agent pools > kk-devops-agent-pool-xxxxx > Agents – Confirm kk-devops-agent is Online. This lab runs the tests in the pipeline only; no Azure resources or service connection are required.
 
+![alt text](<Screenshot 2026-10-30 154150.png>)
+
+![alt text](<Screenshot 2026-10-30 154200.png>)
+
+![alt text](<Screenshot 2026-10-30 154252.png>)
+
+![alt text](<Screenshot 2026-10-30 154715.png>)
+
 ## Exercise 1 – Task 1: Create the CI Pipeline (build + unit tests) In this task, you will create and run the CI pipeline that runs the unit tests and publishes the results to the Tests tab.
 
 The repository ships pipelines/python-functional-tests.yml, which installs dependencies, runs the unit tests (tests/test_calc.py), and publishes the results to the Tests tab. Create and run it.
 
 Navigate to Pipelines > Pipelines > New Pipeline. Select Azure Repos Git > python-calculator-webapp > Existing Azure Pipelines **YAML** File. Branch main, Path /pipelines/python-functional-tests.yml. Click Continue > Run. When the run completes, open the run and check the Tests tab; the unit tests appear there. Rename the pipeline to python-functional-tests.
+
+![alt text](<Screenshot 2026-10-30 155013.png>)
 
 ## Exercise 1 – Task 2: Add Functional Tests to the Pipeline In this task, you will edit the pipeline **YAML** to add a functional-test step alongside the unit tests.
 
@@ -43,9 +55,13 @@ Watch the indentation. In this pipeline, the steps are not indented under steps:
 
 Click *Validate and save* > *Save* (commit directly to main). This queues a new run. The pipeline now runs both the unit and functional tests; the existing Publish test results task picks up functional-results.xml automatically (it globs *-results.xml).
 
+![alt text](<Screenshot 2026-10-30 155200.png>)
+
 ## Exercise 1 – Task 3: Check the Test Summary Results In this task, you will review the combined unit and functional test results in the pipeline run's Tests tab.
 
 Navigate to Pipelines > Pipelines > python-functional-tests and open the latest run. Open the Tests tab. Confirm the summary shows both the unit tests and the functional tests passing (total tests increased after Task 2). Expand the results to see the individual test cases (e.g., test_homepage_loads, test_addition, test_division_by_zero_shows_error). Congratulations! You added functional tests to a CI pipeline and reviewed the results in the Tests tab, without deploying the app anywhere.
+
+![alt text](<Screenshot 2026-10-30 155301.png>)
 
 ## Review  - Congratulations! You have completed the Set up and Run Functional Tests lab.
 
