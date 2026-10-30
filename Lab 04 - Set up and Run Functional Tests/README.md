@@ -30,6 +30,8 @@ Project Settings > Agent pools > kk-devops-agent-pool-xxxxx > Agents – Confirm
 
 ![alt text](<Screenshot 2026-10-30 154252.png>)
 
+![alt text](<Screenshot 2026-10-30 184040.png>)
+
 ![alt text](<Screenshot 2026-10-30 154715.png>)
 
 ## Exercise 1 – Task 1: Create the CI Pipeline (build + unit tests) In this task, you will create and run the CI pipeline that runs the unit tests and publishes the results to the Tests tab.
