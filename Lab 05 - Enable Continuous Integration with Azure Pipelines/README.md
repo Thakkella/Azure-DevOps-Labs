@@ -1,20 +1,24 @@
-# Lab: Enable Continuous Integration with Azure Pipelines - In this lab, you will learn how to define build pipelines in Azure DevOps using **YAML**. The pipelines will be used in two scenarios:
+# Lab: Enable Continuous Integration with Azure Pipelines
 
-As part of a Pull Request validation workflow (build validation policy) As a Continuous Integration (CI) pipeline that triggers automatically on code changes You will work with a Python Calculator application hosted in Azure Repos.
+In this lab, you will learn how to define build pipelines in Azure DevOps using **YAML**. The pipelines will be used in two scenarios:
+
+As part of a Pull Request validation workflow (build validation policy)<br> As a Continuous Integration (CI) pipeline that triggers automatically on code changes<br> You will work with a Python Calculator application hosted in Azure Repos.
 
 This lab covers the following exercises and tasks:
 
-Exercise 0: Configure Lab Prerequisites Task 1: Import the Python Calculator Repository Task 2: Set Main as Default Branch
+Exercise 0: Configure Lab Prerequisites<br> Task 1: Import the Python Calculator Repository<br> Task 2: Set Main as Default Branch
 
-Exercise 1: Include Build Validation as Part of a Pull Request Task 1: Import the PR Validation **YAML** Pipeline Task 2: Configure Branch Policies Task 3: Test the PR Validation Workflow
+Exercise 1: Include Build Validation as Part of a Pull Request<br> Task 1: Import the PR Validation **YAML** Pipeline<br> Task 2: Configure Branch Policies<br> Task 3: Test the PR Validation Workflow
 
-Exercise 2: Configure CI Pipeline as Code with **YAML** Task 1: Import the CI **YAML** Pipeline Task 2: Enable Continuous Integration Trigger Task 3: Test the CI Pipeline
+Exercise 2: Configure CI Pipeline as Code with **YAML**<br> Task 1: Import the CI **YAML** Pipeline<br> Task 2: Enable Continuous Integration Trigger<br> Task 3: Test the CI Pipeline
 
-## Exercise 0 — Task 1: Import the Python Calculator Repository In this task, you will import the Python Calculator source into a new Azure Repos Git repository in your Azure DevOps project.
+## Exercise 0 - Task 1: Import the Python Calculator Repository
+
+In this task, you will import the Python Calculator source into a new Azure Repos Git repository in your Azure DevOps project.
 
 The repository contains:
 
-pipelines folder – Azure DevOps **YAML** pipeline definitions infra folder – Bicep infrastructure-as-code templates src folder – Python application source code tests folder – Unit tests for the application python_calc.py – Flask web calculator application requirements.txt – Python dependencies Steps: In your Azure DevOps project, go to Repos > Files.
+pipelines folder – Azure DevOps **YAML** pipeline definitions<br> infra folder – Bicep infrastructure-as-code templates<br> src folder – Python application source code<br> tests folder – Unit tests for the application<br> python_calc.py – Flask web calculator application<br> requirements.txt – Python dependencies<br> Steps:<br> In your Azure DevOps project, go to Repos > Files.
 
 Open the repository selector dropdown at the top and click *Import repository* (this creates a new repository; do not import into the default project repository).
 
@@ -28,53 +32,53 @@ Wait for the import to complete; the repository files should now appear in the R
 
 If the import fails or prompts for credentials: The source repository is public, so no authentication is required; leave any credential fields blank. A one-off failure is usually a transient GitHub rate-limit, so simply retry the import. Alternatively, clone it locally with git clone [https://github.com/kodekloudhub/python-calculator-webapp.git,](https://github.com/kodekloudhub/python-calculator-webapp.git,) create an empty repository named exactly python-calculator-webapp in Azure Repos, and push the contents.
 
-## Exercise 0 — Task 2: Set Main as Default Branch
+## Exercise 0 - Task 2: Set Main as Default Branch
+
 After importing, the default branch may not be set to main. In this task, you will set main as the default branch.
 
-Steps:
-Navigate to Repos > Branches
+Steps:<br> Navigate to Repos > Branches
 
 Hover over the main branch
 
 Click the ellipsis (…) on the right side
 
-Click "Set as default branch"
+Click *Set as default branch*
 
 Verify that main now shows the default badge
 
-## Exercise 1: Include Build Validation as Part of a Pull Request - Task 1: Import the PR Validation YAML Pipeline
-In this task, you will import the YAML build pipeline that will be used as a branch policy to validate Pull Requests before they can be merged into main.
+## Exercise 1: Include Build Validation as Part of a Pull Request
 
-Steps:
-Navigate to Pipelines > Pipelines
+### Task 1: Import the PR Validation YAML Pipeline
 
-Click "Create Pipeline" (or "New Pipeline")
+In this task, you will import the **YAML** build pipeline that will be used as a branch policy to validate Pull Requests before they can be merged into main.
 
-Select "Azure Repos Git (YAML)" as the source
+Steps:<br> Navigate to Pipelines > Pipelines
+
+Click *Create Pipeline* (or *New Pipeline*)
+
+Select *Azure Repos Git (**YAML**)* as the source
 
 Select the python-calculator-webapp repository
 
-Select "Existing Azure Pipelines YAML File"
+Select *Existing Azure Pipelines **YAML** File*
 
 In the panel that appears:
 
-Branch: main
-Path: /pipelines/python-calc-ci-pr.yml
-Click "Continue"
+Branch: main<br> Path: /pipelines/python-calc-ci-pr.yml<br> Click *Continue*
 
-On the "Review your pipeline YAML" page, click the down-facing caret next to the Run button
+On the *Review your pipeline **YAML*** page, click the down-facing caret next to the Run button
 
-Click "Save" (do not run the pipeline yet)
+Click *Save* (do not run the pipeline yet)
 
 Navigate back to Pipelines > Pipelines, click on the newly created pipeline
 
-Click the ellipsis (…) and select "Rename/Move"
+Click the ellipsis (…) and select *Rename/Move*
 
 Name it: python-calc-ci-pr
 
-Click "Save"
+Click *Save*
 
-Important: When you create the pipeline, Azure DevOps auto-names it after the repository (python-calculator-webapp), not after the YAML file. You must rename it to python-calc-ci-pr (steps 11–13) or the validation check will not pass.
+Important: When you create the pipeline, Azure DevOps auto-names it after the repository (python-calculator-webapp), not after the **YAML** file. You must rename it to python-calc-ci-pr (steps 11–13) or the validation check will not pass.
 
 ![alt text](<Screenshot 2026-10-30 171821.png>)
 
@@ -82,9 +86,13 @@ Important: When you create the pipeline, Azure DevOps auto-names it after the re
 
 ![alt text](<Screenshot 2026-10-30 171908.png>)
 
-## Exercise 1: Include Build Validation as Part of a Pull Request - Task 2: Configure Branch Policies In this task, you will add branch policies to the main branch. These policies will:
+## Exercise 1: Include Build Validation as Part of a Pull Request
 
-Require at least one reviewer for every Pull Request Require the python-calc-ci-pr pipeline to pass as build validation before merging Steps: Navigate to Repos > Branches
+### Task 2: Configure Branch Policies
+
+In this task, you will add branch policies to the main branch. These policies will:
+
+Require at least one reviewer for every Pull Request<br> Require the python-calc-ci-pr pipeline to pass as build validation before merging<br> Steps:<br> Navigate to Repos > Branches
 
 On the Mine tab, hover over the main branch
 
@@ -92,15 +100,19 @@ Click the ellipsis (…) and select *Branch Policies*
 
 Under *Require minimum number of reviewers*:
 
-Toggle it On Set the minimum number of reviewers to 1 Check *Allow requestors to approve their own changes* (this lets you approve your own PR in the lab) Under *Build Validation* section:
+Toggle it On<br> Set the minimum number of reviewers to 1<br> Check *Allow requestors to approve their own changes* (this lets you approve your own PR in the lab)<br> Under *Build Validation* section:
 
-Click the *+* button to add a build policy In the Build pipeline dropdown, select python-calc-ci-pr Leave other settings at defaults Click *Save* Note: In a real-world project, you would typically not allow requestors to approve their own changes. We enable this here so you can complete the lab without a second user account.
+Click the *+* button to add a build policy<br> In the Build pipeline dropdown, select python-calc-ci-pr<br> Leave other settings at defaults<br> Click *Save*<br> Note: In a real-world project, you would typically not allow requestors to approve their own changes. We enable this here so you can complete the lab without a second user account.
 
 ![alt text](<Screenshot 2026-10-30 172512.png>)
 
-## Exercise 1: Include Build Validation as Part of a Pull Request - Task 3: Test the PR Validation Workflow In this task, you will test the Pull Request validation by creating a feature branch, making a code change, and submitting a Pull Request that triggers the build validation pipeline.
+## Exercise 1: Include Build Validation as Part of a Pull Request
 
-Create a Feature Branch and Make a Change: Navigate to Repos > Branches
+### Task 3: Test the PR Validation Workflow
+
+In this task, you will test the Pull Request validation by creating a feature branch, making a code change, and submitting a Pull Request that triggers the build validation pipeline.
+
+Create a Feature Branch and Make a Change:<br> Navigate to Repos > Branches
 
 Click *New branch*
 
@@ -118,13 +130,13 @@ Add the following comment on the first line:
 
    ### Testing my PR
 
-Click *Commit > Commit* (accept the default commit message) Create and Complete the Pull Request: When prompted, click *Create a Pull Request*
+Click *Commit > Commit* (accept the default commit message)<br> Create and Complete the Pull Request:<br> When prompted, click *Create a Pull Request*
 
 In the New pull request tab, leave defaults and click *Create*
 
 The PR will show pending requirements:
 
-Minimum reviewer count not met Build validation running (python-calc-ci-pr) Wait for the python-calc-ci-pr build to complete successfully
+Minimum reviewer count not met<br> Build validation running (python-calc-ci-pr)<br> Wait for the python-calc-ci-pr build to complete successfully
 
 Click *Approve* (top-right) to satisfy the reviewer requirement
 
@@ -134,9 +146,13 @@ On the Complete Pull Request tab, click *Complete Merge*
 
 ![alt text](<Screenshot 2026-10-30 173024.png>)
 
-## Exercise 2: Configure CI Pipeline as Code with **YAML** - Task 1: Import the CI **YAML** Pipeline In this task, you will import the full CI pipeline **YAML** definition. This pipeline performs additional steps compared to the PR validation pipeline, including archiving and publishing build artifacts.
+## Exercise 2: Configure CI Pipeline as Code with YAML
 
-Steps: Navigate to Pipelines > Pipelines
+### Task 1: Import the CI YAML Pipeline
+
+In this task, you will import the full CI pipeline **YAML** definition. This pipeline performs additional steps compared to the PR validation pipeline, including archiving and publishing build artifacts.
+
+Steps:<br> Navigate to Pipelines > Pipelines
 
 Click *New Pipeline*
 
@@ -148,7 +164,7 @@ Select *Existing Azure Pipelines **YAML** File*
 
 In the panel:
 
-Branch: main Path: /pipelines/python-calc-ci-build.yml Click *Continue*
+Branch: main<br> Path: /pipelines/python-calc-ci-build.yml<br> Click *Continue*
 
 On the review page, click *Run* to save and execute the pipeline
 
@@ -162,11 +178,15 @@ Name it: python-calc-ci
 
 Click *Save*
 
-## Exercise 2: Configure CI Pipeline as Code with **YAML** - Task 2: Enable Continuous Integration Trigger In this task, you will modify the CI pipeline **YAML** to enable automatic triggering when code changes are pushed to the main branch under the src/ path.
+## Exercise 2: Configure CI Pipeline as Code with YAML
+
+### Task 2: Enable Continuous Integration Trigger
+
+In this task, you will modify the CI pipeline **YAML** to enable automatic triggering when code changes are pushed to the main branch under the src/ path.
 
 By default, the trigger section in the **YAML** file is commented out. You will uncomment and configure it.
 
-Steps: Navigate to Pipelines > Pipelines and click on the python-calc-ci pipeline
+Steps:<br> Navigate to Pipelines > Pipelines and click on the python-calc-ci pipeline
 
 Click *Edit* (or click the ellipsis near *Run new* and select *Edit pipeline*)
 
@@ -176,7 +196,6 @@ In the **YAML** editor, find the commented-out trigger lines:
     # - main
 
 Replace them with the following trigger configuration:
-
       trigger:
         branches:
           include:
@@ -187,17 +206,21 @@ Replace them with the following trigger configuration:
 
 This configuration means the pipeline will automatically run whenever:
 
-A commit is pushed to the main branch **AND** The commit includes changes to files inside the src/ folder Click *Validate and save*
+A commit is pushed to the main branch **AND**<br> The commit includes changes to files inside the src/ folder<br> Click *Validate and save*
 
 Choose *Save directly to the main branch* (since we have branch policies, you may need to select *Create a new branch for this commit* and complete a PR)
 
 If you created a branch:
 
-Accept the default branch name Keep *Start a pull request* checked Click *Save* Navigate to Repos > Pull Requests Open the PR for the **YAML** update After validations pass, click *Approve* then *Complete* > *Complete Merge*
+Accept the default branch name<br> Keep *Start a pull request* checked<br> Click *Save*<br> Navigate to Repos > Pull Requests<br> Open the PR for the **YAML** update<br> After validations pass, click *Approve* then *Complete* > *Complete Merge*
 
-## Exercise 2: Configure CI Pipeline as Code with **YAML** - Task 3: Test the CI Pipeline In this task, you will verify that the CI pipeline triggers automatically when a code change is merged into main within the src/ path.
+## Exercise 2: Configure CI Pipeline as Code with YAML
 
-Create a Feature Branch and Make a Change: Navigate to Repos > Branches
+### Task 3: Test the CI Pipeline
+
+In this task, you will verify that the CI pipeline triggers automatically when a code change is merged into main within the src/ path.
+
+Create a Feature Branch and Make a Change:<br> Navigate to Repos > Branches
 
 Click *New branch*
 
@@ -215,7 +238,7 @@ Remove the comment # Testing my PR from the first line (added during Exercise 1)
 
 Click *Commit > Commit* (accept the default commit message)
 
-Create and Complete the Pull Request: When prompted, click *Create a Pull Request*
+Create and Complete the Pull Request:<br> When prompted, click *Create a Pull Request*
 
 In the New pull request tab, leave defaults and click *Create*
 
@@ -223,7 +246,7 @@ Wait for the build validation to pass, then click *Approve*
 
 Click *Complete* > *Complete Merge*
 
-Verify the CI Pipeline Triggered: Navigate to Pipelines > Pipelines
+Verify the CI Pipeline Triggered:<br> Navigate to Pipelines > Pipelines
 
 Observe that the python-calc-ci pipeline has been triggered automatically by the merge
 
@@ -233,14 +256,14 @@ Wait for the run to complete successfully
 
 Click *Related* > *Published* to view the published artifacts:
 
-Bicep – The infrastructure-as-code artifact Website – The application artifact
+Bicep – The infrastructure-as-code artifact<br> Website – The application artifact
 
 ![alt text](<Screenshot 2026-10-30 173529.png>)
 
 ![alt text](<Screenshot 2026-10-30 174007.png>)
 
-## Review - Congratulations! You have successfully completed the Enable Continuous Integration with Azure Pipelines lab.
+Review<br> Congratulations! You have successfully completed the Enable Continuous Integration with Azure Pipelines lab.
 
 In this lab, you:
 
-Imported the Python Calculator repository into Azure Repos and set main as the default branch Created a PR validation pipeline (python-calc-ci-pr) from an existing **YAML** definition Configured branch policies on main requiring a minimum reviewer count and build validation Tested the Pull Request workflow by creating a feature branch, making a change, and merging through a validated PR Created a CI pipeline (python-calc-ci) from an existing **YAML** definition Configured CI triggers to automatically run the pipeline on code changes to src/* in the main branch Verified the CI pipeline triggers automatically on merge and publishes both Website and Bicep artifacts These practices form the foundation of a robust CI/CD workflow: automated build validation on Pull Requests ensures code quality, and Continuous Integration pipelines enable rapid feedback.
+Imported the Python Calculator repository into Azure Repos and set main as the default branch<br> Created a PR validation pipeline (python-calc-ci-pr) from an existing **YAML** definition<br> Configured branch policies on main requiring a minimum reviewer count and build validation<br> Tested the Pull Request workflow by creating a feature branch, making a change, and merging through a validated PR<br> Created a CI pipeline (python-calc-ci) from an existing **YAML** definition Configured CI triggers to automatically run the pipeline on code changes to src/* in the main branch<br> Verified the CI pipeline triggers automatically on merge and publishes both Website and Bicep artifacts<br> These practices form the foundation of a robust CI/CD workflow: automated build validation on Pull Requests ensures code quality, and Continuous Integration pipelines enable rapid feedback.
