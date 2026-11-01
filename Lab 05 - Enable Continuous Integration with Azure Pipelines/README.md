@@ -196,6 +196,7 @@ In the **YAML** editor, find the commented-out trigger lines:
     # - main
 
 Replace them with the following trigger configuration:
+
       trigger:
         branches:
           include:
