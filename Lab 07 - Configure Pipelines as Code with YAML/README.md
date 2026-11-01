@@ -34,6 +34,8 @@ RG=$(cat /root/code/lab-resource-group.txt 2>/dev/null || az group list --query 
 
 This creates a Linux Python Web App named gha-pycalc-... (the name is derived from the resource group, so the pipeline can find it automatically).
 
+![alt text](<Screenshot 2026-11-01 171901.png>)
+
 ## Exercise 0 – Task 3: Verify the Self-Hosted Agent and Service Connection
 
 In this task, you will confirm that the lab's self-hosted agent and service connection are in place before you create any pipelines.
@@ -118,11 +120,19 @@ At the end of the file (at the same indentation as - stage: Build), append a Dep
 
 Click *Validate and save* > *Save* (commit directly to main) to queue a new run. The run builds, then the Deploy stage finds the pre-created Web App and deploys the app to it.<br> First run – Permit access: The first time the Deploy stage runs it pauses with "This pipeline needs permission to access a resource before this run can continue* for the service connection. Click *View* > *Permit" to allow access.
 
+![alt text](<Screenshot 2026-11-01 171953.png>)
+
+![alt text](<Screenshot 2026-11-01 173510.png>)
+
+![alt text](<Screenshot 2026-11-01 174927.png>)
+
 ## Exercise 1 – Task 3: Review the Deployed Site 
 
 In this task, you will browse to the Web App and confirm the pipeline deployed the application successfully.
 
 In the Azure Portal, open the pre-created resource group > the App Service (gha-pycalc-...).<br> Browse to [https://<app-name>.azurewebsites.net.<br>](https://<app-name>.azurewebsites.net.<br>) Confirm the Simple Calculator page loads and that you can perform a calculation.<br> This confirms the multi-stage pipeline built the app and deployed the Website artifact to the Web App.
+
+![alt text](<Screenshot 2026-11-01 175114.png>)
 
 ## Exercise 2 – Task 1: Add an Environment Approval and Convert the Deploy Job
 
@@ -177,6 +187,12 @@ Replace the entire Deploy stage with the version below. The changes: - job: Depl
 
 Click *Validate and save* > *Save* (commit to main).
 
+![alt text](<Screenshot 2026-11-01 175246.png>)
+
+![alt text](<Screenshot 2026-11-01 175425.png>)
+
+![alt text](<Screenshot 2026-11-01 175517.png>)
+
 ## Exercise 2 – Task 2: Re-run the Pipeline and Approve the Deployment
 
 In this task, you will re-run the pipeline and manually approve the Deploy stage at the environment gate you just configured.
@@ -184,6 +200,8 @@ In this task, you will re-run the pipeline and manually approve the Deploy stage
 Navigate to Pipelines > Pipelines and open python-multi-stage. Click *Run pipeline* > *Run*.<br> Let the Build stage complete. When the Deploy stage is reached, the run pauses for approval.<br> First run – Permit access: If prompted, Permit the pipeline to use the approvals environment.
 
 Click *Review* > *Approve*.<br> Confirm the Deploy stage resumes and completes, redeploying the app to the Web App.<br> Because the Deploy stage is now a deployment job bound to the approvals environment, the deployment waits for your approval—the gate you add by converting job: to deployment:.
+
+![alt text](<Screenshot 2026-11-01 180102.png>)
 
 Review<br> Congratulations! You have successfully completed the Configure Pipelines as Code with **YAML** lab.
 
