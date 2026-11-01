@@ -18,7 +18,9 @@ In your Azure DevOps project, go to Repos > Files.<br> Open the repository selec
 
 In the Name field, make sure the repository is named exactly python-calculator-webapp. Azure DevOps auto-fills this from the clone **URL** and appends .git by default; delete the trailing .git so the name matches exactly. Then click *Import*.<br> Make sure that main is set as the default branch (Repos > Branches). The repository contains python_calc.py, infra/webapp.bicep, and pipelines/python-multi-stage.yml used in this lab.
 
-Exercise 0 – Task 2: Create the Azure Web App<br> In this task, you will pre-create the Linux Python Web App that the pipeline's Deploy stage will later deploy the application to.
+## Exercise 0 – Task 2: Create the Azure Web App
+
+In this task, you will pre-create the Linux Python Web App that the pipeline's Deploy stage will later deploy the application to.
 
 The Azure Web App is created up front as a prerequisite. The pipeline's Deploy stage then deploys the application to it (the Bicep template is published by the pipeline as an artifact, but the Web App itself is created here).
 
@@ -40,25 +42,27 @@ The lab provisions a self-hosted Linux agent kk-devops-agent (in the kk-devops-a
 
 Project Settings > Agent pools > kk-devops-agent-pool-xxxxx > Agents – Confirm kk-devops-agent is Online.<br> Project Settings > Service connections – Confirm a service connection exists.
 
-Exercise 1 – Task 1: Understand the Multi-Stage **YAML** Pipeline<br> In this task, you will review the structure of the multi-stage **YAML** pipeline and the key concepts behind stages, artifacts, and deployment jobs.
+## Exercise 1 – Task 1: Understand the Multi-Stage **YAML** Pipeline
+
+In this task, you will review the structure of the multi-stage **YAML** pipeline and the key concepts behind stages, artifacts, and deployment jobs.
 
 Open pipelines/python-multi-stage.yml and review its structure:
 
     stages:
     - stage: Build
-        jobs:
-        - job: Build
+      jobs:
+      - job: Build
         steps: [ install, test, archive Web.zip, publish Website + Bicep artifacts ]
 
     - stage: Deploy
-        dependsOn: Build
-        jobs:
+      dependsOn: Build
+      jobs:
         - deployment: Deploy
-        environment: approvals      # <-- targets an environment (approvals attach here)
-        strategy:
-        runOnce:
-        deploy:
-        steps: [ download Website, find Web App, AzureRmWebAppDeployment ]
+          environment: approvals      # <-- targets an environment (approvals attach here)
+          strategy:
+            runOnce:
+              deploy:
+                steps: [ download Website, find Web App, AzureRmWebAppDeployment ]
 
 Note: The Web App was created in Exercise 0; the Deploy stage finds it with az webapp list and deploys to it. The Bicep artifact is published for reference but not deployed by this pipeline.
 
@@ -79,45 +83,50 @@ Rename the pipeline to python-multi-stage (ellipsis > Rename/Move).
 Add continuous delivery (a Deploy stage)
 Open the pipeline and click *Edit*.
 At the end of the file (at the same indentation as - stage: Build), append a Deploy stage. Note that it is an ordinary job: for now. You will convert it to a deployment: job in Exercise 2:
+
     - stage: Deploy
-        displayName: Deploy to an Azure Web App
-        dependsOn: Build
-        condition: succeeded()
-        jobs:
+      displayName: Deploy to an Azure Web App
+      dependsOn: Build
+      condition: succeeded()
+      jobs:
         - job: Deploy
-        pool:
-        name: $(agentPool)
-        steps:
+          pool:
+            name: $(agentPool)
+          steps:
         - download: current
-        artifact: Website
+          artifact: Website
         - task: AzureCLI@2
-        displayName: Find the target Web App
-        inputs:
-        azureSubscription: $(azureServiceConnection)
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-        WEBAPP_NAME=$(az webapp list --resource-group *$(resourceGroup)* --query *[0].name* -o tsv)
-        echo "##vso[task.setvariable variable=WEBAPP_NAME]$WEBAPP_NAME"
+          displayName: Find the target Web App
+          inputs:
+            azureSubscription: $(azureServiceConnection)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+              WEBAPP_NAME=$(az webapp list --resource-group *$(resourceGroup)* --query *[0].name* -o tsv)
+              echo "##vso[task.setvariable variable=WEBAPP_NAME]$WEBAPP_NAME"
         - task: AzureRmWebAppDeployment@4
-        displayName: Deploy application to Web App
-        inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: $(azureServiceConnection)
-        appType: 'webAppLinux'
-        WebAppName: '$(WEBAPP_NAME)'
-        packageForLinux: '$(Pipeline.Workspace)/Website/Web.zip'
-        RuntimeStack: '**PYTHON**|3.12'
-        StartupCommand: 'gunicorn --bind=0.0.0.0:**8000** python_calc:app'
-        DeploymentTypeLinux: 'zipDeploy'
+          displayName: Deploy application to Web App
+          inputs:
+            ConnectionType: 'AzureRM'
+            azureSubscription: $(azureServiceConnection)
+            appType: 'webAppLinux'
+            WebAppName: '$(WEBAPP_NAME)'
+            packageForLinux: '$(Pipeline.Workspace)/Website/Web.zip'
+            RuntimeStack: '**PYTHON**|3.12'
+            StartupCommand: 'gunicorn --bind=0.0.0.0:**8000** python_calc:app'
+            DeploymentTypeLinux: 'zipDeploy'
 
 Click *Validate and save* > *Save* (commit directly to main) to queue a new run. The run builds, then the Deploy stage finds the pre-created Web App and deploys the app to it.<br> First run – Permit access: The first time the Deploy stage runs it pauses with "This pipeline needs permission to access a resource before this run can continue* for the service connection. Click *View* > *Permit" to allow access.
 
-Exercise 1 – Task 3: Review the Deployed Site<br> In this task, you will browse to the Web App and confirm the pipeline deployed the application successfully.
+## Exercise 1 – Task 3: Review the Deployed Site 
+
+In this task, you will browse to the Web App and confirm the pipeline deployed the application successfully.
 
 In the Azure Portal, open the pre-created resource group > the App Service (gha-pycalc-...).<br> Browse to [https://<app-name>.azurewebsites.net.<br>](https://<app-name>.azurewebsites.net.<br>) Confirm the Simple Calculator page loads and that you can perform a calculation.<br> This confirms the multi-stage pipeline built the app and deployed the Website artifact to the Web App.
 
-Exercise 2 – Task 1: Add an Environment Approval and Convert the Deploy Job<br> In this task, you will create an approvals environment with a manual approval check, then convert the Deploy stage from a plain job: into a deployment: job bound to that environment.
+## Exercise 2 – Task 1: Add an Environment Approval and Convert the Deploy Job
+
+In this task, you will create an approvals environment with a manual approval check, then convert the Deploy stage from a plain job: into a deployment: job bound to that environment.
 
 You protect the deployment by binding it to an environment and adding an approval. A regular job: cannot target an environment, so you also convert the Deploy job: into a deployment: job.
 
@@ -131,40 +140,40 @@ Open python-multi-stage > *Edit*.
 Replace the entire Deploy stage with the version below. The changes: - job: Deploy becomes - deployment: Deploy, an environment: approvals line is added, and the steps move under a strategy: runOnce: deploy: block:
 
     - stage: Deploy
-        displayName: Deploy to an Azure Web App
-        dependsOn: Build
-        condition: succeeded()
-        jobs:
+      displayName: Deploy to an Azure Web App
+      dependsOn: Build
+      condition: succeeded()
+      jobs:
         - deployment: Deploy
-        environment: approvals
-        pool:
-        name: $(agentPool)
-        strategy:
-        runOnce:
-        deploy:
-        steps:
-        - download: current
-        artifact: Website
-        - task: AzureCLI@2
-        displayName: Find the target Web App
-        inputs:
-        azureSubscription: $(azureServiceConnection)
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-        WEBAPP_NAME=$(az webapp list --resource-group *$(resourceGroup)* --query *[0].name* -o tsv)
-        echo "##vso[task.setvariable variable=WEBAPP_NAME]$WEBAPP_NAME"
-        - task: AzureRmWebAppDeployment@4
-        displayName: Deploy application to Web App
-        inputs:
-        ConnectionType: 'AzureRM'
-        azureSubscription: $(azureServiceConnection)
-        appType: 'webAppLinux'
-        WebAppName: '$(WEBAPP_NAME)'
-        packageForLinux: '$(Pipeline.Workspace)/Website/Web.zip'
-        RuntimeStack: '**PYTHON**|3.12'
-        StartupCommand: 'gunicorn --bind=0.0.0.0:**8000** python_calc:app'
-        DeploymentTypeLinux: 'zipDeploy'
+          environment: approvals
+          pool:
+            name: $(agentPool)
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                - download: current
+                  artifact: Website
+                - task: AzureCLI@2
+                  displayName: Find the target Web App
+                  inputs:
+                    azureSubscription: $(azureServiceConnection)
+                    scriptType: bash
+                    scriptLocation: inlineScript
+                    inlineScript: |
+                      WEBAPP_NAME=$(az webapp list --resource-group *$(resourceGroup)* --query *[0].name* -o tsv)
+                      echo "##vso[task.setvariable variable=WEBAPP_NAME]$WEBAPP_NAME"
+                - task: AzureRmWebAppDeployment@4
+                  displayName: Deploy application to Web App
+                  inputs:
+                    ConnectionType: 'AzureRM'
+                    azureSubscription: $(azureServiceConnection)
+                    appType: 'webAppLinux'
+                    WebAppName: '$(WEBAPP_NAME)'
+                    packageForLinux: '$(Pipeline.Workspace)/Website/Web.zip'
+                    RuntimeStack: '**PYTHON**|3.12'
+                    StartupCommand: 'gunicorn --bind=0.0.0.0:**8000** python_calc:app'
+                    DeploymentTypeLinux: 'zipDeploy'
 
 Click *Validate and save* > *Save* (commit to main).
 
