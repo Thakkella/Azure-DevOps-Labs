@@ -50,9 +50,9 @@ Now, extract the storage account into its own reusable module.
 
 In Repos > Files, under infra/modules/, create a new file named storage.bicep. Add the storage account as a parameterized module that returns its name as an output (keep the Standard_RAGRS sku from Task 1):
 
-// Storage account module.<br> @description('Resource location.')<br> param location string
+    // Storage account module.<br> @description('Resource location.')<br> param location string
 
-@description('Globally-unique storage account name (3-24 lowercase alphanumerics).')<br> param storageAccountName string
+    @description('Globally-unique storage account name (3-24 lowercase alphanumerics).')<br> param storageAccountName string
 
     resource storageAccount 'Microsoft.Storage/storageAccounts@**2023**-01-01' = {
     name: storageAccountName
@@ -68,7 +68,7 @@ In Repos > Files, under infra/modules/, create a new file named storage.bicep. A
     }
     }
 
-output storageAccountName string = storageAccount.name
+    output storageAccountName string = storageAccount.name
 
 Commit storage.bicep to main.<br> A module is simply a Bicep file you reference from another template, with its own params and outputs. The same module can be reused across deployments with different parameters.
 
@@ -90,7 +90,7 @@ Remove the inline resource storageAccount '...' = { ... } block from main.bicep.
 
 At the bottom, add an output that consumes the module's output:
 
-output storageAccountName string = storage.outputs.storageAccountName
+    output storageAccountName string = storage.outputs.storageAccountName
 
 Commit to main. main.bicep now composes two modules (web app + storage) and returns the storage account name as a deployment output.
 
