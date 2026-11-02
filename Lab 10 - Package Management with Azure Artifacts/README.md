@@ -53,17 +53,18 @@ Note: Both the package source and the pipeline file already exist in the python-
 The publish pipeline (pipelines/publish-package.yml)
 
     variables:
-        - group: lab-vars                    # lab-provided; supplies $(agentPool) -- do not remove
-        - name: feedName                     # <-- you set this to **YOUR** feed in Task 3
+      - group: lab-vars                    # lab-provided; supplies $(agentPool) -- do not remove
+      - name: feedName                     # <-- you set this to **YOUR** feed in Task 3
         value: 'kk-python-feed'
 
-    pool: name: $(agentPool)
+    pool: 
+      name: $(agentPool)
 
     steps:
     - script: |
         sudo apt-get update
         sudo apt-get install -y python3 python3-pip python3-venv
-        displayName: Install Python3, pip, venv
+      displayName: Install Python3, pip, venv
 
     - script: |
         python3 -m venv venv
@@ -71,17 +72,17 @@ The publish pipeline (pipelines/publish-package.yml)
         pip install --upgrade pip build twine
         cd package
         python -m build                    # produces dist/*.whl and *.tar.gz
-        displayName: Build the kk-calculator package (sdist + wheel)
+      displayName: Build the kk-calculator package (sdist + wheel)
 
     - task: TwineAuthenticate@1
-        displayName: Authenticate twine with the Azure Artifacts feed
-        inputs:
+      displayName: Authenticate twine with the Azure Artifacts feed
+      inputs:
         artifactFeed: '$(System.TeamProject)/$(feedName)'   # project-scoped feed
 
     - script: |
         source venv/bin/activate
         twine upload -r $(feedName) --config-file $(PYPIRC_PATH) package/dist/*
-        displayName: Publish the package to the feed
+      displayName: Publish the package to the feed
 
 ## Exercise 1 – Task 3: Point the Pipeline at Your Feed and Run It
 
@@ -90,9 +91,9 @@ In this task, you will set the pipeline's feed name, grant the build identity ac
 In Repos > Files, open pipelines/publish-package.yml and edit it. The file declares its variables as a list, so change only the value: under - name: feedName to the exact feed name you created in Task 1; leave the - group: lab-vars entry in place:
 
     variables:
-    - group: lab-vars
-    - name: feedName
-    value: 'kk-python-feed-<lab-username-suffix>'
+      - group: lab-vars
+      - name: feedName
+        value: 'kk-python-feed-<lab-username-suffix>'
 
 Commit the change to main.
 
@@ -115,7 +116,7 @@ In the lab terminal, activate the pre-created virtual environment (Python, pip a
     source /root/venv/bin/activate
     pip install keyring artifacts-keyring
     pip install kk-calculator \
-    --index-url "[https://pkgs.dev.azure.com/<your-org>/<project>/_packaging/<your-feed>/pypi/simple/"](https://pkgs.dev.azure.com/<your-org>/<project>/_packaging/<your-feed>/pypi/simple/")
+      --index-url "[https://pkgs.dev.azure.com/<your-org>/<project>/_packaging/<your-feed>/pypi/simple/"](https://pkgs.dev.azure.com/<your-org>/<project>/_packaging/<your-feed>/pypi/simple/")
 
 Verify that it works (still inside the venv):
 
