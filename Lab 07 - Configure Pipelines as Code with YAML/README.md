@@ -26,11 +26,10 @@ The Azure Web App is created up front as a prerequisite. The pipeline's Deploy s
 
 Use the lab terminal (already logged in to Azure **CLI**) to provision the Web App with the Bicep template from the repo:
 
-RG=$(cat /root/code/lab-resource-group.txt 2>/dev/null || az group list --query *[0].name* -o tsv)
-
+    RG=$(cat /root/code/lab-resource-group.txt 2>/dev/null || az group list --query *[0].name* -o tsv)
     az deployment group create \
-        --resource-group *$RG* \
-        --template-file /root/code/python-calculator-webapp/infra/webapp.bicep
+      --resource-group *$RG* \
+      --template-file /root/code/python-calculator-webapp/infra/webapp.bicep
 
 This creates a Linux Python Web App named gha-pycalc-... (the name is derived from the resource group, so the pipeline can find it automatically).
 
@@ -95,28 +94,28 @@ At the end of the file (at the same indentation as - stage: Build), append a Dep
           pool:
             name: $(agentPool)
           steps:
-        - download: current
-          artifact: Website
-        - task: AzureCLI@2
-          displayName: Find the target Web App
-          inputs:
-            azureSubscription: $(azureServiceConnection)
-            scriptType: bash
-            scriptLocation: inlineScript
-            inlineScript: |
-              WEBAPP_NAME=$(az webapp list --resource-group *$(resourceGroup)* --query *[0].name* -o tsv)
-              echo "##vso[task.setvariable variable=WEBAPP_NAME]$WEBAPP_NAME"
-        - task: AzureRmWebAppDeployment@4
-          displayName: Deploy application to Web App
-          inputs:
-            ConnectionType: 'AzureRM'
-            azureSubscription: $(azureServiceConnection)
-            appType: 'webAppLinux'
-            WebAppName: '$(WEBAPP_NAME)'
-            packageForLinux: '$(Pipeline.Workspace)/Website/Web.zip'
-            RuntimeStack: '**PYTHON**|3.12'
-            StartupCommand: 'gunicorn --bind=0.0.0.0:**8000** python_calc:app'
-            DeploymentTypeLinux: 'zipDeploy'
+          - download: current
+            artifact: Website
+          - task: AzureCLI@2
+            displayName: Find the target Web App
+            inputs:
+              azureSubscription: $(azureServiceConnection)
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                WEBAPP_NAME=$(az webapp list --resource-group *$(resourceGroup)* --query *[0].name* -o tsv)
+                echo "##vso[task.setvariable variable=WEBAPP_NAME]$WEBAPP_NAME"
+          - task: AzureRmWebAppDeployment@4
+            displayName: Deploy application to Web App
+            inputs:
+              ConnectionType: 'AzureRM'
+              azureSubscription: $(azureServiceConnection)
+              appType: 'webAppLinux'
+              WebAppName: '$(WEBAPP_NAME)'
+              packageForLinux: '$(Pipeline.Workspace)/Website/Web.zip'
+              RuntimeStack: '**PYTHON**|3.12'
+              StartupCommand: 'gunicorn --bind=0.0.0.0:**8000** python_calc:app'
+              DeploymentTypeLinux: 'zipDeploy'
 
 Click *Validate and save* > *Save* (commit directly to main) to queue a new run. The run builds, then the Deploy stage finds the pre-created Web App and deploys the app to it.<br> First run – Permit access: The first time the Deploy stage runs it pauses with "This pipeline needs permission to access a resource before this run can continue* for the service connection. Click *View* > *Permit" to allow access.
 
