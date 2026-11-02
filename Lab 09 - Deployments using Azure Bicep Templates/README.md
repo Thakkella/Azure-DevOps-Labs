@@ -54,7 +54,7 @@ In Repos > Files, under infra/modules/, create a new file named storage.bicep. A
 
 @description('Globally-unique storage account name (3-24 lowercase alphanumerics).')<br> param storageAccountName string
 
-resource storageAccount 'Microsoft.Storage/storageAccounts@**2023**-01-01' = {
+    resource storageAccount 'Microsoft.Storage/storageAccounts@**2023**-01-01' = {
     name: storageAccountName
     location: location
     sku: {
@@ -66,7 +66,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@**2023**-01-01' = {
     allowBlobPublicAccess: false
     supportsHttpsTrafficOnly: true
     }
-}
+    }
 
 output storageAccountName string = storageAccount.name
 
@@ -80,13 +80,13 @@ Replace the inline storage account in main.bicep with a reference to your new mo
 
 Remove the inline resource storageAccount '...' = { ... } block from main.bicep. Add a module reference in its place:
 
-module storage 'modules/storage.bicep' = {
+    module storage 'modules/storage.bicep' = {
     name: 'storageDeploy'
     params: {
     location: location
     storageAccountName: 'st${take(suffix, 16)}'
     }
-}
+    }
 
 At the bottom, add an output that consumes the module's output:
 
