@@ -50,9 +50,12 @@ Now, extract the storage account into its own reusable module.
 
 In Repos > Files, under infra/modules/, create a new file named storage.bicep. Add the storage account as a parameterized module that returns its name as an output (keep the Standard_RAGRS sku from Task 1):
 
-    // Storage account module.<br> @description('Resource location.')<br> param location string
+    // Storage account module.
+    @description('Resource location.')
+    param location string
 
-    @description('Globally-unique storage account name (3-24 lowercase alphanumerics).')<br> param storageAccountName string
+    @description('Globally-unique storage account name (3-24 lowercase alphanumerics).')
+    param storageAccountName string
 
     resource storageAccount 'Microsoft.Storage/storageAccounts@**2023**-01-01' = {
     name: storageAccountName
