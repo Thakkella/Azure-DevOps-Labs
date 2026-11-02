@@ -32,10 +32,7 @@ In this task, you will review the structure of main.bicep and make a small, revi
 
 Open infra/main.bicep (Repos > Files). It already provisions the Web App through a reusable module (modules/webapp.bicep), but the storage account is still defined inline:
 
-infra/
-├── main.bicep            # web app via module + storage account inline
-└── modules/
-    └── webapp.bicep      # Linux Python Web App (reused as-is)
+![alt text](<Screenshot 2026-11-02 165441.png>)
 
 Make a small, reviewable change first. In the inline storageAccount resource, change the redundancy from locally redundant to read-access geo-redundant storage:
 
