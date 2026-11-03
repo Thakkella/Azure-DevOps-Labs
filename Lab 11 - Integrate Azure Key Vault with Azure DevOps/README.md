@@ -6,7 +6,7 @@ This lab covers the following exercises and tasks:
 
 Exercise 0: Configure Lab Prerequisites<br> Task 1: Import the Python Calculator Repository<br> Task 2: Verify the Self-Hosted Agent and Service Connection
 
-Exercise 1: Build the Image and Store the **ACR** Secret<br> Task 1: Run the Docker Compose CI Pipeline (provision **ACR** + build/push) Task 2: Enable the **ACR** Admin User and Store its Password in Key Vault
+Exercise 1: Build the Image and Store the **ACR** Secret<br> Task 1: Run the Docker Compose CI Pipeline (provision **ACR** + build/push)<br> Task 2: Enable the **ACR** Admin User and Store its Password in Key Vault
 
 Exercise 2: Consume the Secret in a Release Pipeline<br> Task 1: Create a Key Vault-Linked Variable Group<br> Task 2: Run the CD Pipeline to Deploy to **ACI** and Verify
 
@@ -51,7 +51,7 @@ Note: The pipeline reads azureServiceConnection, resourceGroup, location, and su
 
 In this task, you will create and run the CI pipeline to provision **ACR** and push the container image.
 
-Navigate to Pipelines > Pipelines > New Pipeline.<br> Select Azure Repos Git (**YAML**) > python-calculator-webapp.<br> Select Existing Azure Pipelines **YAML** File, Branch main, Path /pipelines/python-calc-ci-dockercompose.yml. Click Continue > Run.<br> Confirm the steps complete: Deploy **ACR** (Bicep), Parse **ACR** login server, Build services, Push services.<br> Rename the pipeline to python-calc-ci-dockercompose.<br> In the Azure Portal, open the **ACR** (cr...) > Repositories and confirm the web image is present.<br> First run – Permit access: The first time the pipeline runs, it pauses with "This pipeline needs permission to access a resource before this run can continue.* Click *View* > *Permit" to authorize the service connection, and the run continues.
+Navigate to Pipelines > Pipelines > New Pipeline.<br> Select Azure Repos Git (**YAML**) > python-calculator-webapp.<br> Select Existing Azure Pipelines **YAML** File, Branch main, Path /pipelines/python-calc-ci-dockercompose.yml. Click Continue > Run.<br> Confirm the steps complete: Deploy **ACR** (Bicep), Parse **ACR** login server, Build services, Push services.<br> Rename the pipeline to python-calc-ci-dockercompose.<br> In the Azure Portal, open the **ACR** (cr...) > Repositories and confirm the web image is present.<br> First run – Permit access: The first time the pipeline runs, it pauses with "This pipeline needs permission to access a resource before this run can continue." Click "View" > "Permit" to authorize the service connection, and the run continues.
 
 ![alt text](<Screenshot 2026-11-03 122331.png>)
 
@@ -67,22 +67,22 @@ Signed in? The lab terminal is already authenticated to Azure. If any command be
     LOC=$(az group show --name *$RG* --query location -o tsv)
     ACR=$(az acr list --resource-group *$RG* --query "[0].name" -o tsv)
 
-1. Enable the **ACR** admin user and read its password
+Enable the **ACR** admin user and read its password
 
     az acr update --name "$ACR" --admin-enabled true
     ACR_PW=$(az acr credential show --name "$ACR" --query "passwords[0].value" -o tsv)
 
-2. Create a Key Vault using the access-policy model. Key Vault names are unique across all of Azure, so derive one from this lab's resource group suffix.
+Create a Key Vault using the access-policy model. Key Vault names are unique across all of Azure, so derive one from this lab's resource group suffix.
 
     KV_NAME="kv-acr-${RG##*-}" 
     echo "Key Vault: $KV_NAME"   # note this for the variable group
     az keyvault create --name "$KV_NAME" --resource-group "$RG" --location "$LOC" --enable-rbac-authorization false --retention-days 7
 
-3. Store the **ACR** password as the 'acr-secret' secret
+Store the **ACR** password as the 'acr-secret' secret
 
     az keyvault secret set --vault-name "$KV_NAME" --name acr-secret --value "$ACR_PW"
 
-4. Grant the pipeline service principal get/list on secrets
+Grant the pipeline service principal get/list on secrets
 
     CLIENT_ID=$(showcreds | awk -F'│' '/Azure Application Client ID/ {gsub(/^[ \t]+|[ \t]+$/,"",$3); print $3}')
     SP_OBJECT_ID=$(az ad sp show --id "$CLIENT_ID" --query id -o tsv)
