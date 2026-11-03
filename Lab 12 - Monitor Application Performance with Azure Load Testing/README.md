@@ -82,45 +82,45 @@ Now, gate the pipeline on performance. Add a LoadTest stage that runs the JMeter
 
 Edit pipelines/loadtest-pipeline.yml (Repos > Files). After the Deploy stage, where the comment marks Exercise 3, append this stage:
 
-- stage: LoadTest
-  displayName: Load Test
-  dependsOn: Deploy
-  jobs:
-  - job: LoadTest
-    pool:
-      name: $(agentPool)
-    steps:
-    - checkout: self
-    - task: AzureCLI@2
-      displayName: Run the load test with Azure Load Testing
-      inputs:
-        azureSubscription: $(azureServiceConnection)
-        scriptType: bash
-        scriptLocation: inlineScript
-        inlineScript: |
-          set -e
-          az extension add --name load --only-show-errors
-          RG="$(resourceGroup)"
-          ALT=$(az load list --resource-group "$RG" --query "[0].name" -o tsv)
-          WEBAPP=$(az webapp list --resource-group "$RG" --query "[0].name" -o tsv)
-          HOST=$(az webapp show --resource-group "$RG" --name "$WEBAPP" --query defaultHostName -o tsv)
-          cd loadtest
-          sed -i "s/REPLACE_WITH_WEBAPP_HOST/$HOST/" loadtest.yaml
-          RUN_ID="ci-run-$(Build.BuildId)"
-          az load test create --load-test-resource "$ALT" --resource-group "$RG" --test-id calculator-ci-test --load-test-config-file loadtest.yaml
-          az load test-run create --load-test-resource "$ALT" --resource-group "$RG" --test-id calculator-ci-test --test-run-id "$RUN_ID" || true
-          STATUS="NOT_APPLICABLE"
-          for i in $(seq 1 20); do
-            STATUS=$(az load test-run show --load-test-resource "$ALT" --resource-group "$RG" --test-run-id "$RUN_ID" --query "testResult" -o tsv 2>/dev/null)
-            echo "Attempt $i: testResult=$STATUS"
-            if [ "$STATUS" = "PASSED" ] || [ "$STATUS" = "FAILED" ]; then break; fi
-            sleep 15
-          done
-          echo "Final load test result: $STATUS"
-          if [ "$STATUS" != "PASSED" ]; then
-            echo "##vso[task.logissue type=error]Load test result: $STATUS"
-            exit 1
-          fi
+    - stage: LoadTest
+    displayName: Load Test
+    dependsOn: Deploy
+    jobs:
+    - job: LoadTest
+        pool:
+        name: $(agentPool)
+        steps:
+        - checkout: self
+        - task: AzureCLI@2
+        displayName: Run the load test with Azure Load Testing
+        inputs:
+            azureSubscription: $(azureServiceConnection)
+            scriptType: bash
+            scriptLocation: inlineScript
+            inlineScript: |
+            set -e
+            az extension add --name load --only-show-errors
+            RG="$(resourceGroup)"
+            ALT=$(az load list --resource-group "$RG" --query "[0].name" -o tsv)
+            WEBAPP=$(az webapp list --resource-group "$RG" --query "[0].name" -o tsv)
+            HOST=$(az webapp show --resource-group "$RG" --name "$WEBAPP" --query defaultHostName -o tsv)
+            cd loadtest
+            sed -i "s/REPLACE_WITH_WEBAPP_HOST/$HOST/" loadtest.yaml
+            RUN_ID="ci-run-$(Build.BuildId)"
+            az load test create --load-test-resource "$ALT" --resource-group "$RG" --test-id calculator-ci-test --load-test-config-file loadtest.yaml
+            az load test-run create --load-test-resource "$ALT" --resource-group "$RG" --test-id calculator-ci-test --test-run-id "$RUN_ID" || true
+            STATUS="NOT_APPLICABLE"
+            for i in $(seq 1 20); do
+                STATUS=$(az load test-run show --load-test-resource "$ALT" --resource-group "$RG" --test-run-id "$RUN_ID" --query "testResult" -o tsv 2>/dev/null)
+                echo "Attempt $i: testResult=$STATUS"
+                if [ "$STATUS" = "PASSED" ] || [ "$STATUS" = "FAILED" ]; then break; fi
+                sleep 15
+            done
+            echo "Final load test result: $STATUS"
+            if [ "$STATUS" != "PASSED" ]; then
+                echo "##vso[task.logissue type=error]Load test result: $STATUS"
+                exit 1
+            fi
 
 Commit to main. Run the pipeline again. The new Load Test stage provisions the test, runs it, polls until Azure finalizes the result, and reports **PASSED** / **FAILED**.<br> No role grant needed: The pipeline authenticates with the service connection, whose identity has Contributor at the subscription level, which automatically grants Load Test data-plane access. (To see the gate fail like a real regression check, tighten failureCriteria in loadtest.yaml, e.g., avg(response_time_ms) > **300**, and re-run.)
 
