@@ -122,10 +122,10 @@ In this task, you will run the CD pipeline that reads acr-secret from the linked
 The pipeline pipelines/python-calc-cd-aci.yml references the acr-keyvault-vg variable group and uses $(acr-secret) to authenticate to **ACR**, then deploys the image to Azure Container Instances.
 
     variables:
-    - group: lab-vars
-    - group: acr-keyvault-vg     # provides acr-secret from Key Vault
+     - group: lab-vars
+     - group: acr-keyvault-vg     # provides acr-secret from Key Vault
     ...
-    az container create ... --registry-password *$(acr-secret)* ...
+    az container create ... --registry-password "$(acr-secret)" ...
 
 Steps:<br> Navigate to Pipelines > Pipelines > New Pipeline.<br> Select Azure Repos Git (**YAML**) > python-calculator-webapp.<br> Select Existing Azure Pipelines **YAML** File, Branch main, Path /pipelines/python-calc-cd-aci.yml. Click Continue.<br> Click *Run*. If prompted, permit the pipeline to use acr-keyvault-vg and the service connection.<br> Watch the Deploy stage authenticate with the Key Vault secret and create the container group pycalc-aci.<br> Rename the pipeline to python-calc-cd-aci.<br> Verify<br> In the Azure Portal, open the Container instances resource pycalc-aci, copy its **FQDN**, and browse to [http://<fqdn>](http://<fqdn>) – confirm that the Simple Calculator page loads.
 
