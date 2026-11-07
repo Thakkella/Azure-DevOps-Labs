@@ -32,6 +32,10 @@ Pipelines > Pipelines > Create pipeline > Azure Repos Git > python-calculator-we
 
 If the Deploy stage fails with a capacity error (No available instances..., error **03029**), that's a transient Azure shortage for the B1 tier in the region; re-run the pipeline, or change the location parameter to another allowed region (West US / Central US / South Central US).
 
+![alt text](<Screenshot 2026-11-07 173515.png>)
+
+![alt text](<Screenshot 2026-11-07 173543.png>)
+
 ## Exercise 2 – Task 1: Create an Azure Load Testing Resource
 
 In this task, you will deploy an Azure Load Testing resource; the managed service that generates load against your app from the Azure Portal.
@@ -56,6 +60,8 @@ Optional – Create it with the **CLI** instead. Run the following in the lab te
     az extension add --name load --only-show-errors
     az load create --name alt-az400-loadtest --resource-group "$RG" --location eastus
 
+![alt text](<Screenshot 2026-11-07 174012.png>)
+
 ## Exercise 2 – Task 2: Create and Run a URL-based Load Test
 
 In this task, you will explore Azure Load Testing interactively by creating and running a quick **URL**-based test from the portal and then validate the results.
@@ -75,6 +81,18 @@ Validate the results<br> When the run finishes, review the test-run dashboard an
 Total requests – The total number of requests sent during the run<br> Response time – Shown as the 90th percentile (90% of requests completed within this time), alongside the average<br> Throughput – Requests per second the app sustained<br> Errors (%) – The percentage of failed requests<br> Below the summary tiles, the same values are plotted as client-side metric graphs (response time, virtual users, requests/sec, and errors) over the duration of the run.
 
 Take a few minutes to interpret the results and consider how more virtual users affect the B1 App Service's response time and error rate, the same signals you will gate the pipeline on in Exercise 3.
+
+![alt text](<Screenshot 2026-11-07 174339.png>)
+
+![alt text](<Screenshot 2026-11-07 174849.png>)
+
+![alt text](<Screenshot 2026-11-07 175450.png>)
+
+![alt text](<Screenshot 2026-11-07 175604.png>)
+
+![alt text](<Screenshot 2026-11-07 175634.png>)
+
+![alt text](<Screenshot 2026-11-07 175657.png>)
 
 ## Exercise 3 – Task 1: Add a Load Test Stage to the Pipeline
 
@@ -123,6 +141,10 @@ Edit pipelines/loadtest-pipeline.yml (Repos > Files). After the Deploy stage, wh
               fi
 
 Commit to main. Run the pipeline again. The new Load Test stage provisions the test, runs it, polls until Azure finalizes the result, and reports **PASSED** / **FAILED**.<br> No role grant needed: The pipeline authenticates with the service connection, whose identity has Contributor at the subscription level, which automatically grants Load Test data-plane access. (To see the gate fail like a real regression check, tighten failureCriteria in loadtest.yaml, e.g., avg(response_time_ms) > **300**, and re-run.)
+
+![alt text](<Screenshot 2026-11-07 191017.png>)
+
+![alt text](<Screenshot 2026-11-07 191228.png>)
 
 Review<br> Congratulations! You have completed the Monitor Application Performance with Azure Load Testing lab.
 
